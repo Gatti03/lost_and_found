@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IAA Lost and Found System | Institute of Accountancy Arusha</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="assets/iaa_logo.svg">
+</head>
+<body>
+
+  <!-- ================= AUTHENTICATION VIEW (SIGN IN / SIGN UP) ================= -->
+  <div id="onboarding-container" style="flex-direction: column; gap: 16px;">
+    <!-- Official Colored Square Logo cropped as circle above the card -->
+    <div class="auth-logo-top" style="width: 130px; height: 130px;">
+      <img src="assets/iaa_logo_square.jpg" alt="IAA Logo" style="width: 100%; height: 100%; border-radius: 50%; border: 3px solid rgba(255, 255, 255, 0.8); box-shadow: 0 4px 12px rgba(0,0,0,0.15); object-fit: cover;">
+    </div>
+
+    <div class="auth-card" style="border-radius: 4px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
+      <!-- Auth Mode Switcher -->
+      <div class="dashboard-tabs" style="justify-content: center; margin-bottom: 24px;">
+        <button class="tab-btn active" id="btn-show-signin" onclick="toggleAuthMode('signin')">Sign In</button>
+        <button class="tab-btn" id="btn-show-signup" onclick="toggleAuthMode('signup')">Register Account</button>
+      </div>
+
+      <!-- SIGN IN FORM -->
+      <form id="signin-form" onsubmit="handleSignIn(event)">
+        <div class="auth-header" style="margin-bottom: 24px;">
+          <h2 style="font-size: 1.15rem; color: #0d487f; font-family: var(--font-title); font-weight: 700; text-transform: uppercase;">IAA Lost &amp; Found System</h2>
+          <p style="font-size: 0.85rem; font-weight: 600; color: #0d487f; letter-spacing: 1px;">LFS</p>
+        </div>
+
+        <div class="form-group signin-row">
+          <label for="login-email">Username</label>
+          <input type="text" id="login-email" placeholder="Reg Number or Email" required>
+        </div>
+        <div class="form-group signin-row">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="submit-btn" style="margin-top: 12px; background: #0d487f; border-radius: 4px; font-weight: 700;">
+          Login
+        </button>
+        <div style="margin-top: 12px; font-size: 0.82rem;">
+          <a href="#" onclick="showToast('Please contact the IT Helpdesk to reset your password.', 'info')" style="color: #3b82f6; text-decoration: none; display: flex; align-items: center; gap: 4px;">
+            🔒 Forgot password?
+          </a>
+        </div>
+        <div style="margin-top: 24px; border-top: 1px solid #e2e8f0; padding-top: 16px; text-align: left; font-size: 0.82rem;">
+          <a href="https://iaa.ac.tz" target="_blank" style="color: #3b82f6; text-decoration: none;">For More Information, Click here</a>
+        </div>
+
+      </form>
+
+      <!-- SIGN UP FORM -->
+      <form id="signup-form" class="hidden" onsubmit="handleSignUp(event)">
+        <div class="form-group">
+          <label>Select Your Campus Role</label>
+          <div class="role-selector-grid">
+            <div class="role-option selected" data-role="student">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.663-6.479L12 14z"/></svg>
+              <span>Student</span>
+            </div>
+            <div class="role-option" data-role="staff">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              <span>Staff</span>
+            </div>
+            <div class="role-option" data-role="lecturer">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+              <span>Lecturer</span>
+            </div>
+            <div class="role-option" data-role="security">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5 .614V5.5a2.25 2.25 0 00-1.378-2.077L12 1.03l-7.622 2.394A2.25 2.25 0 003 5.5v7.114c0 4.646 2.766 8.87 7.042 10.74l1.958.857 1.958-.858c4.276-1.87 7.042-6.093 7.042-10.738z"/></svg>
+              <span>Security</span>
+            </div>
+            <div class="role-option" data-role="admin">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 008 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+              <span>Admin</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Identity and account creation -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="reg-name">Full Name</label>
+            <input type="text" id="reg-name" placeholder="John M. Kisiri">
+          </div>
+          <div class="form-group">
+            <label for="reg-phone">Phone Number</label>
+            <input type="tel" id="reg-phone" placeholder="07XXXXXXXX">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="reg-email">Username / Email</label>
+            <input type="email" id="reg-email" placeholder="username@iaa.ac.tz">
+          </div>
+          <div class="form-group">
+            <label for="reg-password">Password</label>
+            <input type="password" id="reg-password" placeholder="Min 6 characters">
+          </div>
+        </div>
+
+        <!-- STUDENT SPECIFIC PROFILE FIELDS -->
+        <div id="student-fields" class="dynamic-fields active">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="student-reg-no">Registration Number (Format: XXX-01-0000-0000)</label>
+              <input type="text" id="student-reg-no" placeholder="e.g., IMC-01-0890-2024" pattern="^[A-Za-z]{3}-01-[0-9]{4}-[0-9]{4}$" title="Registration number must follow formatting: XXX-01-0000-0000">
+            </div>
+            <div class="form-group">
+              <label for="student-year">Year of Study</label>
+              <select id="student-year">
+                <option value="1">First Year (Year 1)</option>
+                <option value="2">Second Year (Year 2)</option>
+                <option value="3">Third Year (Year 3)</option>
+                <option value="postgraduate">Postgraduate</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="student-course">Course / Programme</label>
+            <input type="text" id="student-course" placeholder="Bachelor of Banking and Finance">
+          </div>
+        </div>
+
+        <!-- STAFF SPECIFIC PROFILE FIELDS -->
+        <div id="staff-fields" class="dynamic-fields">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="staff-id">Staff ID Number</label>
+              <input type="text" id="staff-id" placeholder="IAA-ST-1092">
+            </div>
+            <div class="form-group">
+              <label for="staff-dept">Department</label>
+              <input type="text" id="staff-dept" placeholder="Finance &amp; Accounts Office">
+            </div>
+          </div>
+        </div>
+
+        <!-- LECTURER SPECIFIC PROFILE FIELDS -->
+        <div id="lecturer-fields" class="dynamic-fields">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="lecturer-id">Lecturer ID Number</label>
+              <input type="text" id="lecturer-id" placeholder="IAA-LEC-0432">
+            </div>
+            <div class="form-group">
+              <label for="lecturer-faculty">Faculty/Department</label>
+              <select id="lecturer-faculty">
+                <option value="CIT">Computing &amp; Information Technology (CIT)</option>
+                <option value="BA">Business Administration</option>
+                <option value="FA">Finance and Accounts</option>
+                <option value="PL">Procurement &amp; Logistics Management</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECURITY SPECIFIC PROFILE FIELDS -->
+        <div id="security-fields" class="dynamic-fields">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="security-badge">Officer Badge Number</label>
+              <input type="text" id="security-badge" placeholder="IAA-SEC-005">
+            </div>
+            <div class="form-group">
+              <label for="security-rank">Rank / Designation</label>
+              <input type="text" id="security-rank" placeholder="Sergeant / Shift Supervisor">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="security-station">Current Station / Patrol Zone</label>
+            <input type="text" id="security-station" placeholder="Main Campus Gate / Block A Desk">
+          </div>
+        </div>
+
+        <!-- ADMIN SPECIFIC PROFILE FIELDS -->
+        <div id="admin-fields" class="dynamic-fields">
+          <div class="form-group">
+            <label for="admin-passcode">Admin System Registration Code</label>
+            <input type="password" id="admin-passcode" placeholder="Enter administrative authorization key">
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn" style="margin-top: 12px;">
+          Create &amp; Login Account
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </button>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ================= MAIN WEB APP SHELL ================= -->
+  <div id="app-shell" class="hidden">
+    <!-- Sidebar Navigation -->
+    <aside>
+      <div class="brand">
+        <img src="assets/iaa_logo_square.jpg" alt="IAA Shield">
+        <h1>IAA Portal<span>LOST &amp; FOUND</span></h1>
+      </div>
+
+      <ul class="nav-links">
+        <li class="active" id="nav-dashboard">
+          <button onclick="switchView('dashboard')">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Dashboard Feed
+          </button>
+        </li>
+        <li id="nav-post">
+          <button onclick="switchView('post')">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            Report Lost / Found
+          </button>
+        </li>
+        <li id="nav-claims">
+          <button onclick="switchView('claims')">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+            My Claims &amp; Posts
+          </button>
+        </li>
+        <li id="nav-security" class="hidden">
+          <button onclick="switchView('security')">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Security Portal
+          </button>
+        </li>
+        <li id="nav-admin" class="hidden">
+          <button onclick="switchView('admin')">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 16v-4M12 8h.01"/></svg>
+            Admin Dashboard
+          </button>
+        </li>
+      </ul>
+
+      <!-- User card details -->
+      <div class="user-profile-summary">
+        <div class="user-card">
+          <div class="user-avatar" id="profile-avatar">S</div>
+          <div class="user-details">
+            <span class="user-name" id="profile-name">Student Name</span>
+            <span class="user-role-badge badge-student" id="profile-role">Student</span>
+          </div>
+          <button class="logout-btn" onclick="logout()" title="Logout">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 01-2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+          </button>
+        </div>
+
+        <div class="theme-toggle-container">
+          <span>Dark Mode Theme</span>
+          <label class="theme-switch">
+            <input type="checkbox" id="theme-toggle-cb" onchange="toggleTheme()">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Panel -->
+    <main>
+      <!-- ================= VIEW 1: DASHBOARD FEED ================= -->
+      <div id="view-dashboard" class="view-panel">
+        <header>
+          <div>
+            <h2 id="welcome-message">Hello, Claimant!</h2>
+            <p>Welcome to Institute of Accountancy Arusha Lost &amp; Found Portal</p>
+          </div>
+          <button class="action-btn" onclick="switchView('post')">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Report New Item
+          </button>
+        </header>
+
+        <!-- Stats Overview Row -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-info">
+              <h3>Total Items</h3>
+              <p id="stat-total">0</p>
+            </div>
+            <div class="stat-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-info">
+              <h3>Lost Items</h3>
+              <p id="stat-lost">0</p>
+            </div>
+            <div class="stat-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-info">
+              <h3>Found Items</h3>
+              <p id="stat-found">0</p>
+            </div>
+            <div class="stat-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-info">
+              <h3>Resolved</h3>
+              <p id="stat-resolved">0</p>
+            </div>
+            <div class="stat-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search and Filter Panel -->
+        <div class="feed-toolbar">
+          <div class="search-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="search-input" placeholder="Search by name, campus location, or description..." class="filter-select" style="width: 100%;" oninput="applyFilters()">
+          </div>
+
+          <div class="filter-group">
+            <select id="filter-type" class="filter-select" onchange="applyFilters()">
+              <option value="all">All Types</option>
+              <option value="lost">Lost Reports</option>
+              <option value="found">Found Items</option>
+            </select>
+
+            <select id="filter-category" class="filter-select" onchange="applyFilters()">
+              <option value="all">All Categories</option>
+              <option value="electronics">Electronics (Phones, Laptops, Chargers)</option>
+              <option value="documents">Official Documents (IDs, Passports, Bank Cards)</option>
+              <option value="keys">Keys &amp; Keyrings</option>
+              <option value="books">Books &amp; Stationery</option>
+              <option value="bags">Bags, Wallets &amp; Purses</option>
+              <option value="clothing">Clothing &amp; Accessories</option>
+              <option value="other">Other Campus Gear</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Items Feed Grid -->
+        <div class="items-grid" id="items-feed-grid">
+          <!-- Dynamically inserted item cards -->
+        </div>
+      </div>
+
+      <!-- ================= VIEW 2: REPORT NEW ITEM FORM ================= -->
+      <div id="view-post" class="view-panel hidden">
+        <header>
+          <div>
+            <h2>Report Lost or Found Item</h2>
+            <p>Publish a record so the IAA campus community can assist in returning it</p>
+          </div>
+        </header>
+
+        <div class="table-responsive" style="max-width: 750px; padding: 32px; background-color: var(--bg-secondary);">
+          <form id="report-item-form" onsubmit="handlePostItem(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="post-title">Item Title / Name</label>
+                <input type="text" id="post-title" placeholder="e.g., HP EliteBook 840 Laptop" required>
+              </div>
+              <div class="form-group">
+                <label for="post-type">Report Type</label>
+                <select id="post-type" required>
+                  <option value="lost">I Lost This Item (Lost Item)</option>
+                  <option value="found">I Found This Item (Found Item)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="post-category">Category</label>
+                <select id="post-category" required>
+                  <option value="electronics">Electronics (Phones, Laptops, Chargers)</option>
+                  <option value="documents">Official Documents (IDs, Cards)</option>
+                  <option value="keys">Keys &amp; Keyrings</option>
+                  <option value="books">Books &amp; Stationery</option>
+                  <option value="bags">Bags, Wallets &amp; Purses</option>
+                  <option value="clothing">Clothing &amp; Accessories</option>
+                  <option value="other">Other Campus Gear</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="post-date">Date Lost / Found</label>
+                <input type="date" id="post-date" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="post-location">Campus Location (Where?)</label>
+                <input type="text" id="post-location" placeholder="e.g., Library (Ground Floor) / Block B Room 5" required>
+              </div>
+              <div class="form-group" id="storage-container">
+                <label for="post-storage">Where is the item currently kept?</label>
+                <input type="text" id="post-storage" placeholder="e.g., Main Security Desk / CIT Faculty Office">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="post-desc">Item Description &amp; Identifying Marks</label>
+              <textarea id="post-desc" rows="4" placeholder="Describe unique features (e.g. scratches, color, stickers, locked state, password hint, brand) that help identify the exact item." required></textarea>
+            </div>
+
+            <div class="form-group">
+              <label id="post-file-label" style="font-weight: 600;">Item Photo <span style="color: var(--danger);">*</span></label>
+              <div style="display: flex; gap: 12px; align-items: center; margin-top: 6px;">
+                <input type="file" id="post-file-mock" accept="image/*" style="display: none;" onchange="updateMockFileName()">
+                <button type="button" class="view-details-btn" onclick="document.getElementById('post-file-mock').click()">
+                  Choose Photo Image
+                </button>
+                <span id="mock-file-name" style="font-size: 0.8rem; color: var(--text-secondary);">No photo chosen (Required for lost reports)</span>
+              </div>
+            </div>
+
+            <button type="submit" class="submit-btn" style="max-width: 250px; margin-top: 16px;">
+              Publish Report
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ================= VIEW 3: MY CLAIMS & POSTS ================= -->
+      <div id="view-claims" class="view-panel hidden">
+        <header>
+          <div>
+            <h2>My Claims &amp; Posts</h2>
+            <p>Manage your reported items and claims submitted for found items</p>
+          </div>
+        </header>
+
+        <div class="dashboard-tabs">
+          <button class="tab-btn active" onclick="switchClaimsTab('reports')">My Reported Items</button>
+          <button class="tab-btn" onclick="switchClaimsTab('claims')">My Submitted Claims</button>
+        </div>
+
+        <!-- Panel 1: User's reported items -->
+        <div id="claims-tab-reports" class="tab-panel active">
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Item Title</th>
+                  <th>Type</th>
+                  <th>Category</th>
+                  <th>Date Logged</th>
+                  <th>Location</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="user-reports-table-body">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Panel 2: User's claims on other items -->
+        <div id="claims-tab-claims" class="tab-panel">
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Claimed Item</th>
+                  <th>Founder</th>
+                  <th>Claim Date</th>
+                  <th>Claim Proof Provided</th>
+                  <th>Claim Status</th>
+                  <th>Security Action / Note</th>
+                </tr>
+              </thead>
+              <tbody id="user-claims-table-body">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= VIEW 4: SECURITY PORTAL ================= -->
+      <div id="view-security" class="view-panel hidden">
+        <header>
+          <div>
+            <h2>Security Officer Command Center</h2>
+            <p>Campus Security Claim Verification and Inventory Management</p>
+          </div>
+        </header>
+
+        <!-- Stats Overview Row -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-info">
+              <h3>Active Claims</h3>
+              <p id="sec-stat-active-claims">0</p>
+            </div>
+            <div class="stat-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-info">
+              <h3>Items in Custody</h3>
+              <p id="sec-stat-custody">0</p>
+            </div>
+            <div class="stat-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-info">
+              <h3>Total Handed Over</h3>
+              <p id="sec-stat-resolved">0</p>
+            </div>
+            <div class="stat-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <h3 style="font-family: var(--font-title); font-size: 1.25rem; margin: 24px 0 16px 0;">Pending Claim Verifications</h3>
+        <div class="security-claims-grid" id="security-claims-container">
+          <!-- Pending claim verification cards will go here -->
+        </div>
+
+        <h3 style="font-family: var(--font-title); font-size: 1.25rem; margin: 36px 0 16px 0;">All Items Registry</h3>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Item ID</th>
+                <th>Item Name</th>
+                <th>Reporter / Owner Details</th>
+                <th>Type</th>
+                <th>Custody Location</th>
+                <th>Status</th>
+                <th>Management Actions</th>
+              </tr>
+            </thead>
+            <tbody id="sec-items-table-body">
+              <!-- Full item inventory table for security -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ================= VIEW 5: ADMIN PORTAL ================= -->
+      <div id="view-admin" class="view-panel hidden">
+        <header style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h2>System Administration</h2>
+            <p>Global User Directory and System Audit Logs</p>
+          </div>
+          <div>
+            <button class="submit-btn" style="background-color: var(--warning); margin: 0; padding: 10px 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; border-radius: 4px;" onclick="printWeeklyReport()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+              Print Weekly Report
+            </button>
+          </div>
+        </header>
+
+        <!-- Admin Stats row -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-info">
+              <h3>Registered Users</h3>
+              <p id="admin-stat-users">0</p>
+            </div>
+            <div class="stat-icon" style="background-color: rgba(59, 130, 246, 0.15); color: #3b82f6;">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 7a4 4 0 110-8 4 4 0 010 8zm14 14v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-info">
+              <h3>Total Reports</h3>
+              <p id="admin-stat-items">0</p>
+            </div>
+            <div class="stat-icon" style="background-color: rgba(16, 185, 129, 0.15); color: #10b981;">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-info">
+              <h3>Claims Processed</h3>
+              <p id="admin-stat-claims">0</p>
+            </div>
+            <div class="stat-icon" style="background-color: rgba(245, 158, 11, 0.15); color: #f59e0b;">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14M22 4L12 14.01l-3-3"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-tabs" style="margin-top: 32px;">
+          <button class="tab-btn active" id="btn-admin-users" onclick="switchAdminTab('users')">User Accounts Directory</button>
+          <button class="tab-btn" id="btn-admin-items" onclick="switchAdminTab('items')">Item Moderator Registry</button>
+          <button class="tab-btn" id="btn-admin-logs" onclick="switchAdminTab('logs')">System Activity Logs</button>
+        </div>
+
+        <!-- Tab 1: User Accounts -->
+        <div id="admin-tab-users" class="tab-panel active">
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>User Full Name</th>
+                  <th>Username / Email</th>
+                  <th>Phone Number</th>
+                  <th>System Role</th>
+                  <th>Role Specific Details</th>
+                  <th>Manage Permissions / Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admin-users-table-body">
+                <!-- Registered users list -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab 2: Item Moderator Registry -->
+        <div id="admin-tab-items" class="tab-panel">
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Item ID</th>
+                  <th>Item Title</th>
+                  <th>Type</th>
+                  <th>Reporter</th>
+                  <th>Status</th>
+                  <th>Moderate Options</th>
+                </tr>
+              </thead>
+              <tbody id="admin-items-table-body">
+                <!-- Direct administrative overrides -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab 3: System Audit Logs -->
+        <div id="admin-tab-logs" class="tab-panel">
+          <div class="table-responsive" style="padding: 24px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+              <h4 style="font-family: var(--font-title); font-size:1.1rem;">System Events Timeline</h4>
+              <button class="view-details-btn" onclick="clearAuditLogs()" style="color:var(--danger); border-color:var(--danger);">Clear Log History</button>
+            </div>
+            <div id="admin-logs-timeline" style="display:flex; flex-direction:column; gap:12px;">
+              <!-- Audit logs entries -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+
+  <!-- ================= DIALOG MODALS ================= -->
+
+  <!-- Modal 1: Item Details Modal -->
+  <div class="modal-overlay" id="item-details-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="det-item-title">Item Title</h3>
+        <button class="close-modal-btn" onclick="closeModal('item-details-modal')">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-detail-grid">
+          <div class="modal-item-photo" id="det-item-photo-container">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>
+          </div>
+          
+          <div class="modal-item-desc" id="det-item-desc">
+            Item description text goes here...
+          </div>
+
+          <div class="details-table-list">
+            <div class="details-table-row">
+              <span>Report Type</span>
+              <span id="det-item-type">Lost</span>
+            </div>
+            <div class="details-table-row">
+              <span>Category</span>
+              <span id="det-item-category">Electronics</span>
+            </div>
+            <div class="details-table-row">
+              <span>Date Reported</span>
+              <span id="det-item-date">2026-07-07</span>
+            </div>
+            <div class="details-table-row">
+              <span>Campus Location</span>
+              <span id="det-item-location">Library</span>
+            </div>
+            <div class="details-table-row" id="det-item-custody-row">
+              <span>Custody Desk</span>
+              <span id="det-item-custody">Main Security Gate</span>
+            </div>
+            <div class="details-table-row">
+              <span>Reported By</span>
+              <span id="det-item-reporter">Mwakasege (Student)</span>
+            </div>
+            <div class="details-table-row">
+              <span>Reporter Contact</span>
+              <span id="det-item-contact">0754XXXXXX</span>
+            </div>
+          </div>
+
+          <div class="modal-actions" id="det-modal-actions-container">
+            <!-- Dynamic button inputs (e.g. Claim, Mark Resolved, etc.) -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Submit Claim Form Modal -->
+  <div class="modal-overlay" id="claim-submission-modal">
+    <div class="modal-content" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3>Submit Ownership Claim</h3>
+        <button class="close-modal-btn" onclick="closeModal('claim-submission-modal')">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="claim-submit-form" onsubmit="handleClaimItem(event)">
+          <input type="hidden" id="claim-item-id">
+          
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label>Verify Your Identification</label>
+            <div id="claim-role-details-preview" style="background-color: var(--bg-tertiary); padding: 12px; border-radius: 8px; font-size: 0.85rem; border: 1px solid var(--border-color); color: var(--text-secondary);">
+              Student: John Kisiri (IMC/BBF/0012/2024)
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="claim-proof-text">Provide Proof of Ownership</label>
+            <textarea id="claim-proof-text" rows="5" placeholder="Detail any unique characteristics only the owner would know. e.g. serial numbers, passcode description, stickers, scratch locations, files stored inside, or contents of the bag." required></textarea>
+          </div>
+
+          <div style="background-color: rgba(245, 158, 11, 0.1); border: 1px solid var(--warning); padding: 12px; border-radius: 8px; font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.4;">
+            <strong>Important Notice:</strong> By submitting this claim, you authorize IAA Security Officers to verify your campus identity credentials and inspect matching details. Falsifying ownership claims is a serious offense subject to university disciplinary actions.
+          </div>
+
+          <div class="modal-actions">
+            <button type="submit" class="submit-btn" style="margin: 0;">Submit Claim Request</button>
+            <button type="button" class="view-details-btn" onclick="closeModal('claim-submission-modal')" style="flex: 1;">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: Reject Claim Modal (Security) -->
+  <div class="modal-overlay" id="reject-claim-modal">
+    <div class="modal-content" style="max-width: 450px;">
+      <div class="modal-header">
+        <h3>Reject Claim Request</h3>
+        <button class="close-modal-btn" onclick="closeModal('reject-claim-modal')">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="reject-submit-form" onsubmit="handleRejectClaimAction(event)">
+          <input type="hidden" id="reject-claim-id">
+          
+          <div class="form-group">
+            <label for="reject-reason">Reason for Rejection</label>
+            <select id="reject-reason" required>
+              <option value="Insufficient proof of ownership">Insufficient proof of ownership details</option>
+              <option value="Incorrect item description">Details given mismatch the item in custody</option>
+              <option value="Credentials verification failed">Claimant campus ID / credentials check failed</option>
+              <option value="Item already returned to verified owner">Item already handed over to someone else</option>
+              <option value="Other">Other Reason (Specify Below)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="reject-details-text">Officer's Remarks / Explanation</label>
+            <textarea id="reject-details-text" rows="3" placeholder="Provide extra detail to help the claimant understand what is missing or incorrect." required></textarea>
+          </div>
+
+          <div class="modal-actions">
+            <button type="submit" class="submit-btn" style="background: var(--danger); color: white; margin: 0; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);">Confirm Rejection</button>
+            <button type="button" class="view-details-btn" onclick="closeModal('reject-claim-modal')" style="flex: 1;">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ================= TOAST NOTIFICATION CONTAINER ================= -->
+  <div id="toast-container"></div>
+
+  <!-- JavaScript file -->
+  <script src="app.js"></script>
+</body>
+</html>
